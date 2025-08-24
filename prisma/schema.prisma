@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model courses {
+  id String @id @default(uuid())
+  user_id String
+  title String @db.Text
+  description String? @db.Text
+  image_url String? @db.Text
+  price Float?
+  is_published Boolean @default(false)
+  category_id String?
+  category categories? @relation(fields: [category_id], references: [id])
+  attachments attachments[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@index([category_id])
+}
+
+model categories {
+  id String @id @default(uuid())
+  name String @unique
+  courses courses[]
+}
+
+model attachments {
+  id String @id @default(uuid())
+  name String
+  url String @db.Text
+  course_id String
+  course courses @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@index([course_id])
+}

@@ -61,7 +61,7 @@ export const ImageForm = ({
           {!isEditing && initialData.image_url && (
             <>
               <Pencil className="h-4 w-4 mr-2"/>
-              Edit image  
+              Edit  
             </>            
           )}
         </Button>

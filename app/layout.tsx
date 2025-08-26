@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BBox LMS Platform",
-  description: "LMS Platform provided by BarkunBOX",
+  title: "BarkunBOX LMS",
+  description: "Learning Management System by BarkunBOX",
 };
 
 export default function RootLayout({

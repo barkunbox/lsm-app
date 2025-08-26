@@ -22,3 +22,9 @@ npx tsx scripts/seed.ts
 ```
 Change schema.prisma
 ```
+
+
+## URL example
+```
+https://course.bersama-simade.id
+```

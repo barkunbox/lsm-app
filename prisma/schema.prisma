@@ -106,8 +106,9 @@ model purchases {
   
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
+  
   @@index([course_id])
+  @@unique([user_id, course_id])
 }
 
 model stripe_customers {

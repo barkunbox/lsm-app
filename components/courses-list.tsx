@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { categories, courses } from "@prisma/client";
 import { CourseCard } from "@/components/course-card";
 
@@ -27,7 +26,7 @@ export const CoursesList = ({
             chaptersLength={item.chapters.length}
             price={item.price!}
             progress={item.progress}
-            category={item?.category?.name!}
+            category={item?.category?.name}
           />
         ))}
       </div>

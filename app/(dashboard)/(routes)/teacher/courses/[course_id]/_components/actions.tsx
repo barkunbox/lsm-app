@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { Button } from "@/components/ui/button";

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { getChapter } from "@/actions/get-chapter";
 import { Banner } from "@/components/banner";
 import { auth } from "@clerk/nextjs/server";
@@ -10,11 +9,16 @@ import { CourseProgressButton } from "./_components/course-progress-button";
 import { VideoPlayer } from "./_components/video-player";
 import { CourseEnrollButton } from "./_components/course-enroll-button";
 
+interface ChapterIdPageProps {
+  params: {
+    course_id: string;
+    chapter_id: string;
+  }
+}
+
 const ChapterIdPage = async ({
   params
-} : {
-  params: { course_id: string; chapter_id: string; }
-}) => {
+}: ChapterIdPageProps) => {
 
   const { userId } = await auth();
   if (!userId) {
@@ -63,7 +67,7 @@ const ChapterIdPage = async ({
             title={chapter.title}
             courseId={params.course_id}
             nextChapterId={nextChapter?.id}
-            playbackId={muxData?.playback_id!}
+            playbackId={muxData?.playback_id}
             isLocked={isLocked}
             completeOnEnd={completeOnEnd}
           />

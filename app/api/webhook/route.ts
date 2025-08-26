@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Stripe from "stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -17,8 +16,8 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!,
     )
-  } catch (error: any) {
-    return new NextResponse(`Webhook Error: ${error.message}`, { status: 500 });
+  } catch (error) {
+    return new NextResponse(`Webhook Error: ${error}`, { status: 500 });
   }
 
   const session = event.data.object as Stripe.Checkout.Session;

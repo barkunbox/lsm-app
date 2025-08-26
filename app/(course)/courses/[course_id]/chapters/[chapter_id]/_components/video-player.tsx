@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useConfettiStore } from "@/hooks/use-confetti-store";
 import { cn } from "@/lib/utils";
@@ -10,7 +10,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface VideoPlayerProps {
-  playbackId: string;
+  playbackId?: string | null;
   courseId: string;
   chapterId: string;
   nextChapterId?: string;
@@ -81,7 +81,7 @@ export const VideoPlayer = ({
           onCanPlay={() => setIsReady(true)}
           onEnded={onEnd}
           autoPlay
-          playbackId={playbackId}
+          playbackId={playbackId!}
         />
       )}
     </div>

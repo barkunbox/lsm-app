@@ -12,7 +12,7 @@ interface CourseCardProps {
   chaptersLength: number;
   price: number;
   progress: number | null;
-  category: string;
+  category?: string | null;
 };
 
 export const CourseCard = ({

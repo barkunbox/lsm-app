@@ -17,3 +17,8 @@ npx prisma db push
 ```js
 npx tsx scripts/seed.ts
 ```
+
+## MySQL Usage or PostgreSQL
+```
+Change schema.prisma
+```

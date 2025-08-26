@@ -10,6 +10,7 @@ import { ImageForm } from './_components/image-form';
 import { CategoryForm } from './_components/category-form';
 import { PriceForm } from './_components/price-form';
 import { AttachmentForm } from './_components/attachment-form';
+import { ChaptersForm } from './_components/chapters-form';
 
 interface CourseIdPageProps {
   params: Promise<{ course_id: string }>; // 👈 must be a Promise
@@ -20,24 +21,31 @@ const CourseIdPage = async ({
 }: CourseIdPageProps) => {
 
   const { course_id } = await params;
-
   const { userId } = await auth();
+
   if(!userId) {
     return redirect("/");
   }
 
   const course = await db.courses.findUnique({
     where: {
-      id: course_id
+      id: course_id,
+      user_id: userId,
     },
     include: {
+      chapters: {
+        orderBy: {
+          position: "asc"
+        },
+      },
       attachments: {
         orderBy: {
           created_at: "desc"
-        }
-      }
-    }
+        },
+      },
+    },
   });
+
   if(!course) {
     return redirect("/");
   }
@@ -47,7 +55,6 @@ const CourseIdPage = async ({
       name: "asc"
     }
   });
-  // console.log(categories);
 
   const requiredFields = [
     course.title,
@@ -55,11 +62,11 @@ const CourseIdPage = async ({
     course.image_url,
     course.price,
     course.category_id,
+    course.chapters.some(chapter => chapter.is_published),
   ];
 
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
-
   const completionText = `(${completedFields}/${totalFields})`;
 
   return (
@@ -111,9 +118,10 @@ const CourseIdPage = async ({
                 Course chapters
               </h2>
             </div>
-            <div>
-              TO DO: Chapters
-            </div>            
+            <ChaptersForm
+              initialData={course}
+              courseId={course.id}
+            />       
           </div>
           <div>
             <div className='flex items-center gap-x-2'>

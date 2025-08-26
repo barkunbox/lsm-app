@@ -9,16 +9,11 @@ import { CourseProgressButton } from "./_components/course-progress-button";
 import { VideoPlayer } from "./_components/video-player";
 import { CourseEnrollButton } from "./_components/course-enroll-button";
 
-interface ChapterIdPageProps {
-  params: {
-    course_id: string;
-    chapter_id: string;
-  }
-}
-
 const ChapterIdPage = async ({
   params
-}: ChapterIdPageProps) => {
+}: {
+  params: { course_id: string; chapter_id: string; }
+}) => {
 
   const { userId } = await auth();
   if (!userId) {

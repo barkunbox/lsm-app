@@ -26,6 +26,7 @@ export const getCourses = async({
         is_published: true,
         title: {
           contains: title,
+          mode: "insensitive",
         },
         category_id: categoryId,
       },

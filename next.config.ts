@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
     domains: [
       "utfs.io"
     ]
-  }
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;

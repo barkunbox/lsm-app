@@ -11,9 +11,10 @@ const mux = new Mux({
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { course_id: string }}  
+  { params }: { params: Promise<{ course_id: string }>}  
 ) {
   try {
+    const { course_id } = await params;
     const { userId } = await auth();
 
     if (!userId) {
@@ -22,7 +23,7 @@ export async function DELETE(
 
     const course = await db.courses.findUnique({
       where: {
-        id: params.course_id,
+        id: course_id,
         user_id: userId,
       },
       include: {
@@ -46,7 +47,7 @@ export async function DELETE(
 
     const deletedCourse = await db.courses.delete({
       where: {
-        id: params.course_id,
+        id: course_id,
       },
     });
 
@@ -60,7 +61,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { course_id: string }}
+  { params }: { params: Promise<{ course_id: string }>}
 ) {
   try {
     const { userId } = await auth();

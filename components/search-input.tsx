@@ -4,29 +4,40 @@ import { Search } from "lucide-react"
 import { Input } from "./ui/input"
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import qs from "query-string";
 
-export const SearchInput = () => {
+interface SearchInputProps {
+  initialValue?: string;
+  initialCategoryId?: string;
+}
 
-  const [value, setValue] = useState("");
+export const SearchInput = ({ 
+  initialValue = "", 
+  initialCategoryId = "" 
+}: SearchInputProps) => {
+  const [value, setValue] = useState(initialValue);
+  const [categoryId, setCategoryId] = useState(initialCategoryId);
   const debouncedValue = useDebounce(value);
-  const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  const currentCategoryId = searchParams.get("categoryId");
-
   useEffect(() => {
-    const url = qs .stringifyUrl({
+    const url = qs.stringifyUrl({
       url: pathname,
       query: {
-        categoryId: currentCategoryId,
-        title: '%' + debouncedValue + '%',
+        categoryId: categoryId,
+        title: debouncedValue,
       },
     }, { skipEmptyString: true, skipNull: true });
+    
     router.push(url);
-  }, [debouncedValue, currentCategoryId, router, pathname]);
+  }, [debouncedValue, categoryId, router, pathname]);
+
+  // Update categoryId if it changes from parent
+  useEffect(() => {
+    setCategoryId(initialCategoryId);
+  }, [initialCategoryId]);
 
   return (
     <div className="relative">

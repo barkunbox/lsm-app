@@ -4,9 +4,10 @@ import { NextResponse } from "next/server";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { course_id: string; chapter_id: string; }}
+  { params }: { params: Promise<{ course_id: string; chapter_id: string; }>}
 ) {
   try {
+    const { chapter_id } = await params;
     const { userId } = await auth();
     const { isCompleted } = await req.json();
 
@@ -18,7 +19,7 @@ export async function PUT(
       where: {
         user_id_chapter_id: {
           user_id: userId,
-          chapter_id: params.chapter_id,
+          chapter_id: chapter_id,
         },
       },
       update: {
@@ -26,7 +27,7 @@ export async function PUT(
       },
       create: {
         user_id: userId,
-        chapter_id: params.chapter_id,
+        chapter_id: chapter_id,
       },
     });
 

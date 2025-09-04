@@ -11,9 +11,10 @@ const mux = new Mux({
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { course_id: string; chapter_id: string; }}
+  { params }: { params: Promise<{ course_id: string; chapter_id: string; }>}
 ) {
   try {
+    const { course_id, chapter_id } = await params;
     const { userId } = await auth();
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -21,7 +22,7 @@ export async function DELETE(
     
     const courseOwner = await db.courses.findUnique({
       where: {
-        id: params.course_id,
+        id: course_id,
         user_id: userId
       }
     });
@@ -31,8 +32,8 @@ export async function DELETE(
 
     const chapter = await db.chapters.findUnique({
       where: {
-        id: params.chapter_id,
-        course_id: params.course_id,
+        id: chapter_id,
+        course_id: course_id,
       },
     });
 
@@ -43,7 +44,7 @@ export async function DELETE(
     if (chapter.video_url) {
       const existingMuxData = await db.mux_datas.findFirst({
         where: {
-          chapter_id: params.chapter_id,
+          chapter_id: chapter_id,
         },
       });
 
@@ -59,13 +60,13 @@ export async function DELETE(
 
     const deletedChapter = await db.chapters.delete({
       where: {
-        id: params.chapter_id,
+        id: chapter_id,
       }
     });
 
     const publishedChaptersInCourse = await db.chapters.findMany({
       where: {
-        course_id: params.course_id,
+        course_id: course_id,
         is_published: true,
       },
     });
@@ -73,7 +74,7 @@ export async function DELETE(
     if (!publishedChaptersInCourse.length) {
       await db.courses.update({
         where: {
-          id: params.course_id,
+          id: course_id,
         },
         data: {
           is_published: false,
@@ -91,9 +92,10 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { course_id: string; chapter_id: string; }}
+  { params }: { params: Promise<{ course_id: string; chapter_id: string; }>}
 ) {
   try {
+    const { course_id, chapter_id } = await params;
     const { userId } = await auth();
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -101,7 +103,7 @@ export async function PATCH(
     
     const courseOwner = await db.courses.findUnique({
       where: {
-        id: params.course_id,
+        id: course_id,
         user_id: userId
       }
     });
@@ -109,12 +111,12 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { is_published, ...values } = await req.json();
+    const { ...values } = await req.json();
 
     const chapter = await db.chapters.update({
       where: {
-        id: params.chapter_id,
-        course_id: params.course_id,
+        id: chapter_id,
+        course_id: course_id,
       },
       data: {
         ...values,
@@ -125,7 +127,7 @@ export async function PATCH(
 
       const existingMuxData = await db.mux_datas.findFirst({
         where: {
-          chapter_id: params.chapter_id
+          chapter_id: chapter_id
         },
       });
 
@@ -145,7 +147,7 @@ export async function PATCH(
 
       await db.mux_datas.create({
         data: {
-          chapter_id: params.chapter_id,
+          chapter_id: chapter_id,
           asset_id: asset.id,
           playback_id: asset.playback_ids?.[0]?.id,
         }

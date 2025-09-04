@@ -27,9 +27,15 @@ interface PriceFormProps {
   courseId: string;
 };
 
+// Define a custom type for the form values
+type FormValues = {
+  price: number;
+};
+
+// Create the schema with explicit typing
 const formSchema = z.object({
-  price: z.coerce.number(),
-})
+  price: z.number().min(0, "Price must be a positive number"),
+});
 
 export const PriceForm = ({
   initialData,
@@ -42,16 +48,19 @@ export const PriceForm = ({
 
   const router = useRouter();
   
-  const form = useForm<z.infer<typeof formSchema>>({
+  // Convert null to 0 for the default value
+  const initialPrice = initialData?.price !== null ? initialData.price : 0;
+  
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      price: initialData?.price || undefined
+      price: initialPrice,
     },
   });
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormValues) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Course price updated");
@@ -82,7 +91,7 @@ export const PriceForm = ({
           "text-sm mt-2",
           !initialData.price && "text-slate-500 italic"
         )}>
-          {initialData.price
+          {initialData.price !== null
             ? formatPrice(initialData.price)
             : "No price"
           }
@@ -102,10 +111,14 @@ export const PriceForm = ({
                   <FormControl>
                     <Input
                       type="number"
-                      step="1"
+                      step="0.01"
                       disabled={isSubmitting}
                       placeholder="e.g. 'Set a price for your course'"
                       {...field}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        field.onChange(isNaN(value) ? 0 : value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

@@ -4,12 +4,12 @@ import { redirect } from "next/navigation";
 const CourseIdPage = async ({
   params
 } : {
-  params: { course_id: string; }
+  params: Promise<{ course_id: string; }>
 }) => {
-
+  const { course_id } = await params;
   const course = await db.courses.findUnique({
     where: {
-      id: params.course_id,
+      id: course_id,
     },
     include: {
       chapters: {

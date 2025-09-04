@@ -15,14 +15,14 @@ import { Banner } from '@/components/banner';
 import { Actions } from './_components/actions';
 
 interface CourseIdPageProps {
-  params: { course_id: string }
+  params: Promise<{ course_id: string; }>
 }
 
 const CourseIdPage = async ({
   params
 }: CourseIdPageProps) => {
 
-  const { course_id } = params;
+  const { course_id } = await params;
   const { userId } = await auth();
 
   if(!userId) {
@@ -93,7 +93,7 @@ const CourseIdPage = async ({
           </div>
           <Actions
             disabled={!isComplete}
-            courseId={params.course_id}
+            courseId={course_id}
             isPublished={course.is_published}
           />
         </div>

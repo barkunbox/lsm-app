@@ -6,9 +6,10 @@ import Stripe from "stripe";
 
 export async function POST(
   req: Request,
-  { params }: { params: { course_id: string }}
+  { params }: { params: Promise<{ course_id: string }>}
 ) {
   try {
+    const { course_id } = await params;
     const user = await currentUser();
 
     if (!user || !user.id || !user.emailAddresses?.[0]?.emailAddress) {
@@ -17,7 +18,7 @@ export async function POST(
 
     const course = await db.courses.findUnique({
       where: {
-        id: params.course_id,
+        id: course_id,
         is_published: true,
       },
     });
@@ -26,7 +27,7 @@ export async function POST(
       where: {
         user_id_course_id: {
           user_id: user.id,
-          course_id: params.course_id,
+          course_id: course_id,
         },
       },
     });
